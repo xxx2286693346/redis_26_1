@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- mybatis核心配置文件的根标签 -->
+<configuration>
+	<settings>
+		<!--日志实现LOG4J SLF4J | LOG4J | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING | 
+			STDOUT_LOGGING | NO_LOGGING -->
+		<setting name="logImpl" value="LOG4J"></setting>
+	</settings>
+
+    <!-- 插件配置 分页拦截器 -->
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageInterceptor"/>
+	</plugins>
+</configuration>

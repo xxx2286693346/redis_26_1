@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- 配置文件中扫描的包是需要修改 -->
+	<context:component-scan
+		base-package="com.ycl.zy">
+		<!-- 排除controller -->
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+
+	<!-- 加载db.properties文件 -->
+	<context:property-placeholder
+		location="classpath:db.properties" ignore-unresolvable="true" />
+
+	<!-- 配置数据库连接池 -->
+	<bean id="druidDataSource"
+		class="com.alibaba.druid.pool.DruidDataSource">
+		<!-- 驱动名称 -->
+		<property name="driverClassName"
+			value="${jdbc.driverClassName}" />
+		<!-- 连接地址 -->
+		<property name="url" value="${jdbc.url}" />
+		<!-- 用户名 -->
+		<property name="username" value="${jdbc.username}" />
+		<!-- 密码 -->
+		<property name="password" value="${jdbc.password}" />
+		<!-- 池子最小连接 -->
+		<property name="minIdle" value="${minIdle}" />
+		<!-- 池子的初始化大小 -->
+		<property name="initialSize" value="${initialSize}" />
+		<!-- 池子的最大连接数据 -->
+		<property name="maxActive" value="${maxActive}" />
+		<!-- 池子获取连接的等待时长 -->
+		<property name="maxWait" value="${maxWait}" />
+	</bean>
+
+
+	<!-- mybatis的连接工厂 -->
+	<bean id="sqlSessionFactoryBean"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 数据源配置 -->
+		<property name="dataSource" ref="druidDataSource" />
+		<!-- 读取mybatis配置文件的操作 -->
+		<property name="configLocation" value="classpath:mybatis.xml" />
+		<!-- 每次考试，都需要修改别名 -->
+		<property name="typeAliasesPackage"
+			value="com.ycl.zy.entity" />
+	</bean>
+
+
+	<!-- mapper的扫描 -->
+	<bean id="mapperScannerConfigurer"
+		class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 每次考试，都需要修改basePackage -->
+		<property name="basePackage"
+			value="com.ycl.zy.mapper" />
+	</bean>
+
+
+
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="druidDataSource" />
+	</bean>
+
+
+	<!-- 开启事务注解 -->
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+
+	<!-- 导入其它的配置文件 -->
+	<import resource="spring-redis.xml" />
+
+</beans>
